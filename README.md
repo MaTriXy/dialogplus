@@ -1,22 +1,11 @@
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-dialogplus-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1413)    [![API](https://img.shields.io/badge/API-10%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=10) [![Join the chat at https://gitter.im/orhanobut/dialogplus](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/orhanobut/dialogplus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-dialogplus-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1413)    [![API](https://img.shields.io/badge/API-10%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=10) [![Join the chat at https://gitter.im/orhanobut/dialogplus](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/orhanobut/dialogplus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![](https://img.shields.io/badge/AndroidWeekly-%23144-blue.svg)](http://androidweekly.net/issues/issue-144)
 
 DialogPlus
 ==========
-Simple, easy dialog solution for android.
 
-<img src='https://github.com/orhanobut/dialogplus/blob/master/images/dialog-plus.png' width='128' height='128'/>
-<hr>
+<img src='https://github.com/nr4bt/dialogplus/blob/master/art/dialogplus.gif' height='400'/> <img src='https://github.com/nr4bt/dialogplus/blob/master/art/dialogplusanim.gif' height='400'/>
 
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d1.png' width='140' height='200'/>
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d2.png' width='140' height='200'/>
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d3.png' width='140' height='200'/>
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d4.png' width='140' height='200'/>
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d5.png' width='140' height='200'/>
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d6.png' width='140' height='200'/>
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d7.png' width='140' height='200'/>
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d8.png' width='140' height='200'/>
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d9.png' width='140' height='200'/>
-<img src='https://github.com/nr4bt/dialogplus/blob/master/images/d10.png' width='140' height='200'/>
+##### DialogPlus provides android L dialog animation
 
 ##### DialogPlus provides 3 position:
 - Top : Dialog will appear at top with animation
@@ -28,16 +17,9 @@ Simple, easy dialog solution for android.
 - GridHolder : Items will be shown in a gridview
 - ViewHolder : Your customized view will be shown in the content
 
-##### Android L version animation will be added soon.
-
 ### Gradle
 ```groovy
-repositories {
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/"}
-}
-dependencies {
-    compile 'com.orhanobut:dialogplus:1.2-SNAPSHOT@aar'
-}
+compile 'com.orhanobut:dialogplus:1.10@aar'
 ```
 
 ### Usage
@@ -45,18 +27,28 @@ Use the builder to create the dialog.
 
 Basic usage
 ```java
-DialogPlus dialog = new DialogPlus.Builder(this)
-        .setAdapter(adapter)
-        .setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
-            }
-        })
-        .create();
+DialogPlus dialog = DialogPlus.newDialog(this)
+    .setAdapter(adapter)
+    .setOnItemClickListener(new OnItemClickListener() {
+        @Override
+        public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
+        }
+    })
+    .setExpanded(true)  // This will enable the expand feature, (similar to android L share dialog)
+    .create();
 dialog.show();
 ```
 
 ### More options
+Enable expand animation same as Android L share dialog
+```java
+.setExpanded(true) // default is false, only works for grid and list
+```
+Set expand animation default height
+```java
+.setExpanded(true, 300)
+```
+
 Select different holder.
 
 - Use ListView as content holder, note that this is default content type.
@@ -75,9 +67,13 @@ or pass view itself
 ```java
 .setContentHolder(new GridHolder(COLUMN_NUMBER))
 ```
-- Set dialog position. BOTTOM (default), TOP or CENTER
+- Get the holder view, ListView, GridView or your custom view
 ```java
-.setGravity(DialogPlus.Gravity.CENTER)
+View view = dialogPlus.getHolderView();
+```
+- Set dialog position. BOTTOM (default), TOP or CENTER. You can also combine other Gravity options.
+```java
+.setGravity(Gravity.CENTER)
 ```
 - Define if the dialog is cancelable and should be closed when back pressed or out of dialog is clicked
 ```java
@@ -109,6 +105,10 @@ or pass view itself
 ```java
 .setMargins(left, top, right, bottom)
 ```
+- Set padding to the holder
+```java
+.setPadding(left, top, right, bottom)
+```
 - Set the footer view using the id of the layout resource
 ```java
 .setFooter(R.layout.footer)
@@ -116,6 +116,10 @@ or pass view itself
 or use view
 ```java
 .setFooter(view)
+```
+- Get the footer view
+```java
+View view = dialogPlus.getFooterView();
 ```
 - Set the header view using the id of the layout resource
 ```java
@@ -125,14 +129,49 @@ or use view
 ```java
 .setHeader(view)
 ```
+- Get the header view
+```java
+View view = dialogPlus.getHeaderView();
+```
 - Set animation resources
 ```java
 .setInAnimation(R.anim.abc_fade_in)
 .setOutAnimation(R.anim.abc_fade_out)
 ```
-- Set screen type to either fill the screen or only half
+- Set width and height for the content
 ```java
-.setScreenType(DialogPlus.ScreenType.FULL)
+.setContentWidth(ViewGroup.LayoutParams.WRAP_CONTENT)  // or any custom width ie: 300
+.setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+```
+
+- Dismiss Listener, triggered when the dialog is dismissed
+```java
+.setOnDismissListener(new OnDismissListener() {
+    @Override
+    public void onDismiss(DialogPlus dialog) {
+
+    }
+})
+```
+
+- Cancel Listener, triggered when the dialog is cancelled by back button or clicking outside
+```java
+.setOnCancelListener(new OnCancelListener() {
+    @Override
+    public void onCancel(DialogPlus dialog) {
+
+    }
+})
+```
+
+- BackPress Listener, triggered when the back button is pressed
+```java
+.setOnBackPressListener(new OnBackPressListener() {
+    @Override
+    public void onBackPressed(DialogPlus dialog) {
+
+    }
+})
 ```
 
 #### You might also like
