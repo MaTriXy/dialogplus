@@ -7,12 +7,15 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.AbsListView;
 
-/**
- * @author Orhan Obut
- */
+import androidx.annotation.Nullable;
+
 final class Utils {
 
   private static final int INVALID = -1;
+
+  private Utils() {
+    // no instance
+  }
 
   static int getStatusBarHeight(Context context) {
     int result = 0;
@@ -40,7 +43,7 @@ final class Utils {
    *
    * @return null if both resourceId and view is not set
    */
-  static View getView(Context context, int resourceId, View view) {
+  @Nullable static View getView(Context context, int resourceId, View view) {
     LayoutInflater inflater = LayoutInflater.from(context);
     if (view != null) {
       return view;
@@ -59,15 +62,14 @@ final class Utils {
    * @return the id of the animation resource
    */
   static int getAnimationResource(int gravity, boolean isInAnimation) {
-    switch (gravity) {
-      case Gravity.TOP:
-        return isInAnimation ? R.anim.slide_in_top : R.anim.slide_out_top;
-      case Gravity.BOTTOM:
-        return isInAnimation ? R.anim.slide_in_bottom : R.anim.slide_out_bottom;
-      case Gravity.CENTER:
-        return isInAnimation ? R.anim.fade_in_center : R.anim.fade_out_center;
-      default:
-        // This case is not implemented because we don't expect any other gravity at the moment
+    if ((gravity & Gravity.TOP) == Gravity.TOP) {
+      return isInAnimation ? R.anim.slide_in_top : R.anim.slide_out_top;
+    }
+    if ((gravity & Gravity.BOTTOM) == Gravity.BOTTOM) {
+      return isInAnimation ? R.anim.slide_in_bottom : R.anim.slide_out_bottom;
+    }
+    if ((gravity & Gravity.CENTER) == Gravity.CENTER) {
+      return isInAnimation ? R.anim.fade_in_center : R.anim.fade_out_center;
     }
     return INVALID;
   }
